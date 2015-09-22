@@ -1,48 +1,40 @@
 @import url(//fonts.googleapis.com/css?family=Open+Sans:400,300,600,400italic,600italic,300italic);
 
-/* colour pallete: #F2D89C, #EE7A30, #A84A29, #5A1516, #BE3330 */
 html {
-	height: 100%;
-	margin: 0;
-	padding: 0;
+  height: 100%;
 }
-
 body {
-	font: 16px/1.4 'Open Sans', Helvetica, Arial, Sans-Serif;
-	background: #5A1516 url(./bg.png) center no-repeat;
-	background-size: cover;
-	min-height: 100%;
-	display: flex;
-	align-items: center;
+  font-family: "Open Sans", sans-serif;
+  background: #444 url("http://blog.wduyck.me/content/images/2014/12/dino-wallpaper.png") no-repeat center / cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
-header.jumbotron {
-	margin-top: 10%;
-	background: rgba( 39, 35, 37, .9 );
-	color: #F2D89C;
-	width: 100%;
+body > header.jumbotron {
+  background: transparent;
+  color: #eee;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  background: rgba( 0, 0, 0, 0.4 );
+  width: 100%;
 }
 
-	h1, h2 {
-		font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, Sans-Serif;
-		font-weight: 300;
-	}
+body > header a {
+  color: #eee;
+  font-family: "Open Sans", sans-serif;
+}
 
-	.icons a {
-		font-size: 2.4em;
-		border-radius: 100%;
-		border: 1px solid #EE7A30;
-		width: 1.5em;
-		height: 1.5em;
-		margin: 1rem;
-		display: inline-block;
-		color: inherit;
-		transition: all 0.4s ease;
-	}
+body > header ul {
+  margin-top: 2em;
+}
 
-		.icons a:hover {
-			color: #EE7A30;
-			border-color: #A84A29;
-		}
+body > header ul > li {
+  margin: 1em;
+}
 
-
+body > header i::before {
+  border: 2px solid #eee;
+  border-radius: 100%;
+  padding: .4em;
+}
