@@ -5,7 +5,7 @@ html {
 }
 body {
   font-family: "Open Sans", sans-serif;
-  background: #444 url("http://blog.wduyck.me/content/images/2014/12/dino-wallpaper.png") no-repeat center / cover;
+  background: #444 url("bg.png") no-repeat center / cover;
   display: flex;
   align-items: center;
   justify-content: center;
