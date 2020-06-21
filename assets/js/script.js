@@ -36,7 +36,7 @@ wrappedFetch(`${repoUrl}`)
   ]))
   .then(([branch, tags]) => {
     const el = document.querySelector('#version a')
-    const tag = tags.find(tag => tag.sha === branch.commit.sha)
+    const tag = tags.find(tag => tag.commit.sha === branch.commit.sha)
 
     if (tag) {
       el.textContent = tag.name
