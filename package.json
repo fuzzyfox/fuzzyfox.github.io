@@ -1,6 +1,6 @@
 {
   "name": "fuzzyfox.github.io",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "Personal landing page for William Duyck (https://wduyck.me/)",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
