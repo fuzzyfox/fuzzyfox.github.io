@@ -1,6 +1,6 @@
 {
   "name": "fuzzyfox.github.io",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "description": "Personal landing page for William Duyck (https://wduyck.me/)",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -24,8 +24,8 @@
     "prettier-plugin-tailwindcss": "^0.3.0",
     "tailwindcss": "^3.3.2"
   },
-  "engines" : {
-    "node" : ">=18",
+  "engines": {
+    "node": ">=18",
     "npm": ">=9.5"
   }
 }
