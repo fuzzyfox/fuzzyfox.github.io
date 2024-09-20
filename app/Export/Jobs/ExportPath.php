@@ -4,8 +4,8 @@ namespace App\Export\Jobs;
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Spatie\Export\Destination;
 
@@ -17,13 +17,12 @@ class ExportPath extends \Spatie\Export\Jobs\ExportPath
 
         $localRequest->headers->set('X-Laravel-Export', 'true');
 
-        $route = app('router')->getRoutes()->match($localRequest);
-
-        /** @var Response $response */
-        $response = app()->handle(Request::createFromBase($localRequest));
+        $response = $kernel->handle($localRequest);
 
         if ($response->status() !== 200) {
-            throw new RuntimeException("Path [{$this->path}] returned status code [{$response->status()}]", previous: $response->toException());
+            Log::driver('stderr')->error($response->content());
+
+            throw new RuntimeException("Path [{$this->path}] returned status code [{$response->status()}]");
         }
 
         $destination->write($this->normalizePath($this->path), $response->content());
