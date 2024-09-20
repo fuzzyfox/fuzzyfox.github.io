@@ -48,8 +48,18 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Start Laravel server in the background
+        run: |
+          php artisan serve & # Start server in background
+          echo $! > server.pid # Store the process ID in a file
+
       - name: Export static site
         run: php artisan export -vvv
+
+      - name: Stop Laravel server
+        run: |
+          kill $(cat server.pid) # Kill the server using the stored process ID
+          rm server.pid # Clean up the process ID file
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
