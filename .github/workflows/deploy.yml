@@ -45,14 +45,17 @@ jobs:
       - name: Install node dependencies
         run: npm ci
 
-      - name: Build frontend
-        run: npm run build
+      - name: Copy .env.example to .env
+        run: cp .env.example .env
+
+      - name: Generate APP_KEY
+        run: php artisan key:generate
+
+      - name: Set APP_URL
+        run: echo 'APP_URL="http://localhost:8000"' >> .env
 
       - name: Start Laravel server in the background
         run: |
-          cp .env.example .env
-          php artisan key:generate
-          echo 'APP_URL="http://localhost:8000"' >> .env
           php artisan serve --port=8000 & # Start server in background
           echo $! > server.pid # Store the process ID in a file
 
