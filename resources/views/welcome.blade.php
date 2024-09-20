@@ -49,7 +49,7 @@
                 x-show="expanded"
                 x-collapse.min.300px.duration.700ms
             >
-                @foreach (\App\Models\Skill::promoted()->get()->sortByDesc("rank")as $skill)
+                @foreach(\App\Models\Skill::promoted()->get()->sortByDesc("rank") as $skill)
                     <x-cv.skill :skill="$skill" />
                 @endforeach
             </div>
@@ -87,7 +87,7 @@
             </h2>
 
             <div class="grid gap-6">
-                @foreach (\App\Models\Position::orderBy("start_date", "desc")->get() as $position)
+                @foreach(\App\Models\Position::orderBy("start_date", "desc")->get() as $position)
                     <x-cv.position :position="$position" />
                 @endforeach
             </div>

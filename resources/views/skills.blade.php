@@ -16,7 +16,7 @@
             </h2>
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach (\App\Models\Skill::promoted()->get()->sortByDesc("rank")as $skill)
+                @foreach(\App\Models\Skill::promoted()->get()->sortByDesc("rank") as $skill)
                     <x-cv.skill
                         :skill="$skill"
                         :years="true"
@@ -34,7 +34,7 @@
             </h2>
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach (\App\Models\Skill::with("children")->withCount("children")->whereNull("parent_id")->whereHas("children")->get()->sortByDesc(["rank", "children_count"])as $skill)
+                @foreach(\App\Models\Skill::with("children")->withCount("children")->whereNull("parent_id")->whereHas("children")->get()->sortByDesc(["rank", "children_count"]) as $skill)
                     <x-cv.skill
                         :skill="$skill"
                         :years="true"
@@ -45,7 +45,7 @@
                     <div
                         class="col-span-full -mt-6 grid grid-cols-1 gap-6 rounded border border-t-0 p-6 sm:grid-cols-2 lg:grid-cols-3"
                     >
-                        @foreach ($skill->ancestors->sortByDesc("rank") as $child)
+                        @foreach($skill->ancestors->sortByDesc("rank") as $child)
                             <x-cv.skill
                                 :skill="$child"
                                 :years="true"
@@ -55,7 +55,7 @@
                     </div>
                 @endforeach
 
-                @foreach (\App\Models\Skill::whereNull("parent_id")->whereDoesntHave("children")->get()->sortByDesc("rank")as $skill)
+                @foreach(\App\Models\Skill::whereNull("parent_id")->whereDoesntHave("children")->get()->sortByDesc("rank") as $skill)
                     <x-cv.skill
                         :skill="$skill"
                         :years="true"

@@ -42,7 +42,7 @@
             </div>
 
             <nav class="flex items-center">
-                @foreach (\App\Models\Social::orderBy("sort")->orderBy("id")->get()as $social)
+                @foreach(\App\Models\Social::orderBy("sort")->orderBy("id")->get() as $social)
                     <x-ui.button
                         as="a"
                         size="icon"
