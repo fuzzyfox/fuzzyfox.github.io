@@ -43,13 +43,14 @@
                     />
 
                     <div
-                        class="col-span-full -mt-6 grid grid-cols-1 gap-6 rounded border border-t-0 p-6 sm:grid-cols-2 lg:grid-cols-3 bg-secondary"
+                        class="col-span-full -mt-7 grid grid-cols-1 gap-6 rounded-b-lg p-6 pt-7 sm:grid-cols-2 lg:grid-cols-3 bg-secondary"
                     >
                         @foreach($skill->ancestors->sortByDesc("rank") as $child)
                             <x-cv.skill
                                 :skill="$child"
                                 :years="true"
                                 :level="true"
+                                track-class="bg-accent"
                             />
                         @endforeach
                     </div>

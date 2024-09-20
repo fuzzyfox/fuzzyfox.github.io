@@ -2,6 +2,7 @@
     "skill",
     "years" => false,
     "level" => false,
+    "trackClass" => null
 ])
 
 <div {!! $attributes !!}>
@@ -31,7 +32,7 @@
         @endif
     </div>
 
-    <x-ui.progress.root>
+    <x-ui.progress.root @class([$trackClass => $trackClass])>
         <x-ui.progress.indicator
             :value="$skill->rank * 100"
             :max="100"
