@@ -5,7 +5,7 @@ import animate from 'tailwindcss-animate'
 import { fontFamily } from 'tailwindcss/defaultTheme'
 
 export default {
-    darkMode: 'media',
+    darkMode: 'system',
     content: [
         'resources/**/*.blade.php',
         'resources/**/*.js',
