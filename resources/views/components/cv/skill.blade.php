@@ -25,7 +25,7 @@
         </h3>
 
         @if ($years && $skill->years_of_experience)
-            <small class="ml-auto self-end text-muted-foreground">
+            <small class="ml-auto self-end text-muted-foreground whitespace-nowrap">
                 {{ $skill->years_of_experience < 5 ? $skill->years_of_experience : floor($skill->years_of_experience / 5) * 5 . "+" }}
                 yrs
             </small>
