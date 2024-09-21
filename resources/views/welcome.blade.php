@@ -13,7 +13,7 @@
 @endsection
 
 @section("body")
-    <header class="border-b p-10 md:p-20 lg:p-40">
+    <header class="border-b p-10 md:p-20 lg:p-40 bg-secondary">
         <h1 class="sr-only">William Duyck</h1>
 
         <svg
