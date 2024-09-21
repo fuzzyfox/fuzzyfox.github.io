@@ -5,7 +5,11 @@
     "trackClass" => null
 ])
 
-<div {!! $attributes !!}>
+@php($as = $skill->url ? 'a' : 'div')
+
+<{!! $as !!}
+    {{ when($skill->url, 'href='.$skill->url.' rel="noopener" target="_blank"') }}
+    {!! $attributes !!}>
     <div class="mb-2 flex items-center gap-2">
         @if ($skill->icon)
             <x-icon
@@ -39,4 +43,4 @@
             @style(["background-color: " . $skill->color => $skill->color])
         />
     </x-ui.progress.root>
-</div>
+</{!! $as !!}>

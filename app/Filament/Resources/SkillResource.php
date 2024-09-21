@@ -52,6 +52,9 @@ class SkillResource extends Resource
                     ->alphaDash()
                     ->required(),
 
+                Forms\Components\TextInput::make('url')
+                    ->url(),
+
                 Forms\Components\Select::make('parent_id')
                     ->relationship(name: 'parent', titleAttribute: 'name')
                     ->searchable()
@@ -120,6 +123,10 @@ class SkillResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->searchable(),
+
+                Tables\Columns\TextColumn::make('url')
+                    ->url(fn (?string $state) => $state, shouldOpenInNewTab: true)
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('description')
                     ->formatStateUsing(fn ($state) => new HtmlString(Str::inlineMarkdown($state)))
