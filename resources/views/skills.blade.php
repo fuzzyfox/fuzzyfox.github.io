@@ -43,7 +43,7 @@
                     />
 
                     <div
-                        class="col-span-full -mt-7 grid grid-cols-1 gap-6 rounded-b-lg p-6 pt-7 sm:grid-cols-2 lg:grid-cols-3 bg-secondary"
+                        class="col-span-full -mt-8 grid grid-cols-1 gap-6 rounded-b-lg p-6 pt-8 sm:grid-cols-2 lg:grid-cols-3 bg-secondary"
                     >
                         @foreach($skill->ancestors->sortByDesc("rank") as $child)
                             <x-cv.skill
