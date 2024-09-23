@@ -32,7 +32,7 @@
         @vite("resources/js/app.js")
     </head>
     <body class="font-sans antialiased">
-        <aside class="flex justify-between border-b p-2 text-sm">
+        <aside class="flex justify-between border-b p-2 text-sm print:hidden">
             <div class="flex items-center gap-2">
                 @hasSection("home")
                     @yield("home")

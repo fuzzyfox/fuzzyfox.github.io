@@ -13,7 +13,7 @@
 @endsection
 
 @section("body")
-    <header class="border-b p-10 md:p-20 lg:p-40 bg-secondary">
+    <header class="border-b p-10 md:p-20 lg:p-40 bg-secondary print:hidden">
         <h1 class="sr-only">William Duyck</h1>
 
         <svg
@@ -45,7 +45,7 @@
             </h2>
 
             <div
-                class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 print:grid-cols-3"
                 x-show="expanded"
                 x-collapse.min.300px.duration.700ms
             >
@@ -60,7 +60,7 @@
                     variant="outline"
                     href="{{ route('skills.index') }}"
                     x-show="expanded"
-                    class="mt-4"
+                    class="mt-4 print:hidden"
                 >
                     Show All Skills
                 </x-ui.button>
@@ -72,7 +72,7 @@
             size="sm"
             @click="expanded = true"
             x-show="!expanded"
-            class="mx-auto -mb-10 flex md:-mb-14"
+            class="mx-auto -mb-10 flex md:-mb-14 print:hidden"
         >
             Show More
         </x-ui.button>

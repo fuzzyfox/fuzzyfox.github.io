@@ -78,5 +78,11 @@ export default {
             },
         },
     },
+    extend: {
+        screens: {
+            print: { raw: 'print' },
+            screen: { raw: 'screen' }
+        }
+    },
     plugins: [typography, aspectRatio, animate],
 }
