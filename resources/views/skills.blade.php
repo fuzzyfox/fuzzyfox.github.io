@@ -18,9 +18,12 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach(\App\Models\Skill::promoted()->get()->sortByDesc("rank") as $skill)
                     <x-cv.skill
+                        as="a"
                         :skill="$skill"
                         :years="true"
                         :level="true"
+                        :href="when(! $skill->parent_id, '#'.$skill->slug)"
+                        :link="(bool) $skill->parent_id"
                     />
                 @endforeach
             </div>
@@ -36,9 +39,12 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach(\App\Models\Skill::with("children")->withCount("children")->whereNull("parent_id")->whereHas("children")->get()->sortByDesc(["rank", "children_count"]) as $skill)
                     <x-cv.skill
+                        :id="$skill->slug"
+                        :x-ref="$skill->slug"
                         :skill="$skill"
                         :years="true"
                         :level="true"
+                        :link="true"
                         class="col-span-full"
                     />
 
@@ -50,6 +56,7 @@
                                 :skill="$child"
                                 :years="true"
                                 :level="true"
+                                :link="true"
                                 track-class="bg-accent"
                             />
                         @endforeach
@@ -61,6 +68,7 @@
                         :skill="$skill"
                         :years="true"
                         :level="true"
+                        :link="true"
                     />
                 @endforeach
             </div>

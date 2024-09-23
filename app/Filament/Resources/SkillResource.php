@@ -174,10 +174,41 @@ class SkillResource extends Resource
             ->defaultSort('name')
             ->reorderable('sort')
             ->filters([
-                Tables\Filters\TernaryFilter::make('icon')
+                Tables\Filters\TernaryFilter::make('has_icon')
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('icon'),
                         false: fn ($query) => $query->whereNull('icon'),
+                    ),
+
+                Tables\Filters\TernaryFilter::make('has_url')
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('url'),
+                        false: fn ($query) => $query->whereNull('url'),
+                    ),
+
+                Tables\Filters\TernaryFilter::make('has_parent')
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('parent'),
+                        false: fn ($query) => $query->whereNull('parent'),
+                    ),
+
+                Tables\Filters\TernaryFilter::make('has_start_year')
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('start_year'),
+                        false: fn ($query) => $query->whereNull('start_year'),
+                    ),
+
+                Tables\Filters\TernaryFilter::make('has_level')
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('level'),
+                        false: fn ($query) => $query->whereNull('level'),
+                    ),
+
+                Tables\Filters\TernaryFilter::make('has_years_of_experience')
+                    ->label('Has experience')
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('years_of_experience'),
+                        false: fn ($query) => $query->whereNull('years_of_experience'),
                     ),
 
                 Tables\Filters\SelectFilter::make('parent_id')
@@ -190,7 +221,7 @@ class SkillResource extends Resource
                         return svg($record->icon, attributes: ['style' => 'height: 1.4em; width: 1.4em; margin-right: 1ch; display: inline-block; color: '.($record->color ?: 'currentColor').';'])->toHtml().' '.$record->name;
                     })
                     ->searchable()
-                    ->preload()
+                    ->multiple()
                     ->modifyFormFieldUsing(fn (Forms\Components\Select $field) => $field->allowHtml()),
             ])
             ->actions([

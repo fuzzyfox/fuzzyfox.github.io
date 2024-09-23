@@ -36,6 +36,9 @@
         --radius: 0.5rem;
 
         --font-sans: "Inter";
+
+        scroll-behavior: smooth;
+        scroll-padding: 1rem;
     }
 
     @media (prefers-color-scheme: dark) {

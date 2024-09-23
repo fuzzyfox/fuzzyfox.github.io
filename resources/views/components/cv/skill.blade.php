@@ -2,13 +2,15 @@
     "skill",
     "years" => false,
     "level" => false,
+    "link" => false,
+    "as" => null,
     "trackClass" => null
 ])
 
-@php($as = $skill->url ? 'a' : 'div')
+@php($as ??= $link && $skill->url ? 'a' : 'div')
 
 <{!! $as !!}
-    {{ when($skill->url, 'href='.$skill->url.' rel="noopener" target="_blank"') }}
+    {{ when($link && $skill->url, 'href='.$skill->url.' rel="noopener" target="_blank"') }}
     {!! $attributes !!}>
     <div class="mb-2 flex items-center gap-2">
         @if ($skill->icon)
