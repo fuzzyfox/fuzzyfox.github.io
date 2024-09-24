@@ -46,7 +46,7 @@ jobs:
         run: npm ci
 
       - name: Copy .env.public to .env
-        run: cp .env.example .env
+        run: cp .env.public .env
 
       - name: Generate APP_KEY
         run: php artisan key:generate
