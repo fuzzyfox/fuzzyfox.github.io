@@ -57,7 +57,7 @@
                                 :years="true"
                                 :level="true"
                                 :link="true"
-                                track-class="bg-accent"
+                                track-class="bg-background"
                             />
                         @endforeach
                     </div>
