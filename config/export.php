@@ -25,6 +25,7 @@ return [
      */
     'include_files' => [
         'public' => '',
+        'storage/app/public' => 'storage',
     ],
 
     /*

@@ -15,6 +15,7 @@ class Position extends Model
         'title',
         'company',
         'description',
+        'logo',
 
         'type',
 

@@ -7,6 +7,7 @@ use App\Filament\Resources\PositionResource\Pages;
 use App\Models\Position;
 use App\Models\Skill;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -39,58 +40,114 @@ class PositionResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(3)
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required(),
+                Forms\Components\Group::make()
+                    ->columnSpan(2)
+                    ->schema([
+                        Forms\Components\Section::make(static::getTitleCaseModelLabel())
+                            ->icon(static::getNavigationIcon())
+                            ->collapsible()
+                            ->columns()
+                            ->schema([
+                                Forms\Components\TextInput::make('title')
+                                    ->required(),
 
-                Forms\Components\TextInput::make('company')
-                    ->required(),
+                                Forms\Components\TextInput::make('company')
+                                    ->required(),
 
-                Forms\Components\MarkdownEditor::make('description')
-                    ->columnSpanFull(),
+                                Forms\Components\MarkdownEditor::make('description')
+                                    ->columnSpanFull(),
+                            ]),
 
-                Forms\Components\Select::make('type')
-                    ->options(PositionType::class)
-                    ->required(),
+                        Forms\Components\Section::make(SkillResource::getTitleCasePluralModelLabel())
+                            ->icon(SkillResource::getNavigationIcon())
+                            ->collapsed()
+                            ->schema([
+                                Forms\Components\Select::make('skills')
+                                    ->hiddenLabel()
+                                    ->relationship('skills', 'name')
+                                    ->createOptionForm(fn (Form $form) => SkillResource::form($form))
+                                    ->getOptionLabelFromRecordUsing(function (Skill $record): string {
+                                        if (! $record->icon) {
+                                            return $record->name;
+                                        }
 
-                Forms\Components\TextInput::make('locality')
-                    ->datalist(Position::distinct()->pluck('locality')->all()),
+                                        return svg(
+                                            name: $record->icon,
+                                            attributes: [
+                                                'style' => 'height: 1.4em; width: 1.4em; margin-right: 1ch; display: inline-block; color: '.($record->color ?: 'currentColor').';',
+                                            ]
+                                        )->toHtml().' '.$record->name;
+                                    })
+                                    ->searchable()
+                                    ->preload()
+                                    ->optionsLimit(Skill::count() + 100)
+                                    ->multiple()
+                                    ->allowHtml()
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
 
-                Forms\Components\Select::make('region')
-                    ->options(fn () => Arr::map(
-                        Arr::sort(
-                            Arr::mapWithKeys(
-                                Countries::getCountryCodes(),
-                                fn (string $countryCode) => [$countryCode => Countries::getName($countryCode)]
-                            ),
-                        ),
-                        fn ($country, $code) => country2emoji($code).' '.$country
-                    ))
-                    ->searchable()
-                    ->preload()
-                    ->live(onBlur: true),
+                Forms\Components\Group::make()
+                    ->columnSpan(1)
+                    ->schema([
+                        Forms\Components\Section::make(static::getTitleCaseModelLabel().' type')
+                            ->icon(static::getNavigationIcon())
+                            ->collapsed()
+                            ->schema([
+                                Forms\Components\Select::make('type')
+                                    ->hiddenLabel()
+                                    ->options(PositionType::class)
+                                    ->required(),
+                            ]),
 
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
+                        Forms\Components\Section::make('Location')
+                            ->icon('lucide-map')
+                            ->collapsed()
+                            ->schema([
+                                Forms\Components\TextInput::make('locality')
+                                    ->label('City')
+                                    ->datalist(Position::distinct()->pluck('locality')->all()),
 
-                Forms\Components\DatePicker::make('end_date'),
+                                Forms\Components\Select::make('region')
+                                    ->label('Country')
+                                    ->options(fn () => Arr::map(
+                                        Arr::sort(
+                                            Arr::mapWithKeys(
+                                                Countries::getCountryCodes(),
+                                                fn (string $countryCode
+                                                ) => [$countryCode => Countries::getName($countryCode)]
+                                            ),
+                                        ),
+                                        fn ($country, $code) => country2emoji($code).' '.$country
+                                    ))
+                                    ->searchable()
+                                    ->preload()
+                                    ->live(onBlur: true),
+                            ]),
 
-                Forms\Components\Select::make('skills')
-                    ->relationship('skills', 'name')
-                    ->createOptionForm(fn (Form $form) => SkillResource::form($form))
-                    ->getOptionLabelFromRecordUsing(function (Skill $record): string {
-                        if (! $record->icon) {
-                            return $record->name;
-                        }
+                        Forms\Components\Section::make('Dates')
+                            ->icon('lucide-calendar')
+                            ->collapsed()
+                            ->schema([
+                                Forms\Components\DatePicker::make('start_date')
+                                    ->required(),
 
-                        return svg($record->icon, attributes: ['style' => 'height: 1.4em; width: 1.4em; margin-right: 1ch; display: inline-block; color: '.($record->color ?: 'currentColor').';'])->toHtml().' '.$record->name;
-                    })
-                    ->searchable()
-                    ->preload()
-                    ->optionsLimit(Skill::count() + 100)
-                    ->multiple()
-                    ->allowHtml()
-                    ->columnSpanFull(),
+                                Forms\Components\DatePicker::make('end_date'),
+                            ]),
+
+                        Forms\Components\Section::make('Logo')
+                            ->icon('lucide-image')
+                            ->collapsed()
+                            ->schema([
+                                FileUpload::make('logo')
+                                    ->hiddenLabel()
+                                    ->disk('public')
+                                    ->directory('positions/logos')
+                                    ->image(),
+                            ]),
+                    ]),
             ]);
     }
 
