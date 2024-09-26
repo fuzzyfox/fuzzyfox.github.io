@@ -14,7 +14,11 @@
         </h3>
         <div class="text-sm text-muted-foreground">
             {{ $position->company }} |
-            {{ $position->start_date->format("M Y") }}@if ($position->end_date) - {{ $position->end_date->format("M Y") }}
+            {{ $position->start_date->format("M Y") }}
+            @if ($position->end_date)
+                - {{ $position->end_date->format("M Y") }}
+            @else
+                - Present
             @endif
         </div>
     </div>
