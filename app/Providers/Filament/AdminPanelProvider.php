@@ -6,6 +6,7 @@ use Awcodes\Overlook\OverlookPlugin;
 use Awcodes\Overlook\Widgets\OverlookWidget;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -33,8 +34,12 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([OverlookWidget::class])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->plugins([
-                OverlookPlugin::make(),
+            ->plugins([OverlookPlugin::make()])
+            ->navigationItems([
+                NavigationItem::make('View Site')
+                    ->url(url('/'), shouldOpenInNewTab: true)
+                    ->icon('lucide-external-link')
+                    ->sort(-1),
             ])
             ->middleware([
                 EncryptCookies::class,
