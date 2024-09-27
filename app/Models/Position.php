@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PositionType;
+use App\Models\Concerns\HasSqids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,12 +11,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Position extends Model
 {
     use HasFactory;
+    use HasSqids;
 
     protected $fillable = [
         'title',
         'company',
         'description',
         'logo',
+        'header_color',
+        'header_image',
 
         'type',
 

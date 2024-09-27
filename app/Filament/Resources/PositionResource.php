@@ -7,6 +7,7 @@ use App\Filament\Resources\PositionResource\Pages;
 use App\Models\Position;
 use App\Models\Skill;
 use Filament\Forms;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -147,6 +148,18 @@ class PositionResource extends Resource
                                     ->directory('positions/logos')
                                     ->image(),
                             ]),
+
+                        Forms\Components\Section::make('Styling')
+                            ->icon('lucide-brush')
+                            ->collapsed()
+                            ->schema([
+                                ColorPicker::make('header_color'),
+
+                                FileUpload::make('header_image')
+                                    ->disk('public')
+                                    ->directory('positions/logos')
+                                    ->image(),
+                            ]),
                     ]),
             ]);
     }
@@ -156,30 +169,43 @@ class PositionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->toggleable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('company')
+                    ->toggleable()
                     ->searchable(),
 
+                Tables\Columns\ImageColumn::make('logo')
+                    ->toggleable()
+                    ->square(),
+
                 Tables\Columns\TextColumn::make('type')
-                    ->badge(),
+                    ->badge()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('locality')
+                    ->toggleable()
+                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('region')
                     ->formatStateUsing(fn (?string $state) => $state
                         ? country2emoji($state).' '.Countries::getName($state)
                         : null)
+                    ->toggleable()
+                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('start_date')
                     ->date('M Y')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('end_date')
                     ->date('M Y')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -191,6 +217,7 @@ class PositionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('start_date', 'desc')
             ->filters([
                 //
             ])

@@ -2,7 +2,7 @@
     "position",
 ])
 
-<div class="clear-both">
+<div {!! $attributes->class('clear-both') !!}>
     @if ($position->logo)
         <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($position->logo) }}" alt="{{ $position->company }} logo" class="block size-14 text-xs float-left rounded bg-secondary mr-4 mb-4 sm:mb-2">
     @endif
@@ -32,7 +32,7 @@
             @endforeach
 
             @if ($position->skills->count() > 9)
-                <x-ui.badge variant="outline" class="text-muted-foreground">
+                <x-ui.badge as="a" :href="route('positions.show', ['position' => $position->getRouteKey()])" variant="outline" class="text-muted-foreground">
                     +{{ $position->skills->count() - 9 }} more
                 </x-ui.badge>
             @endif
