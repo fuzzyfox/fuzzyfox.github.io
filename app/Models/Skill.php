@@ -65,12 +65,12 @@ class Skill extends Model
     /**
      * @return Attribute<Collection<static>>
      */
-    public function ancestors(): Attribute
+    public function descendants(): Attribute
     {
         return Attribute::get(function () {
             return $this->children
                 ->loadMissing('children')
-                ->flatMap(fn (Skill $child) => [$child, ...$child->ancestors])
+                ->flatMap(fn (Skill $child) => [$child, ...$child->descendants])
                 ->map(fn (Skill $child) => $child->unsetRelation('children'));
         });
     }
