@@ -1,5 +1,6 @@
 @props([
     "position",
+    "noDescription" => false,
 ])
 
 <div {!! $attributes->class('clear-both') !!}>
@@ -39,7 +40,7 @@
         </div>
     @endif
 
-    @if ($position->description)
+    @if (! $noDescription && $position->description)
         <p class="text-muted-foreground mt-2">
             {!! \Illuminate\Support\Str::inlineMarkdown($position->description) !!}
         </p>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Position;
+use App\Models\Skill;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'))->name('home');
@@ -11,10 +12,12 @@ Route::get('/positions/{position}', fn (Position $position) => view('positions.s
     'position' => $position->loadMissing(['skills']),
 ]))->name('positions.show');
 
+Route::get('cv', fn () => view('cv'));
+
 if (App::isLocal()) {
     Route::get('/cv.pdf', function () {
         return \Spatie\LaravelPdf\Support\pdf()
-            ->view('welcome')
+            ->view('cv')
             ->format(\Spatie\LaravelPdf\Enums\Format::A4)
             ->withBrowsershot(fn (\Spatie\Browsershot\Browsershot $browsershot) => $browsershot
                 ->noSandbox()

@@ -4,7 +4,8 @@
     "level" => false,
     "link" => false,
     "as" => null,
-    "trackClass" => null
+    "trackClass" => null,
+    "indicatorClass" => null,
 ])
 
 @php($as ??= $link && $skill->url ? 'a' : 'div')
@@ -43,6 +44,7 @@
             :value="$skill->rank * 100"
             :max="100"
             @style(["background-color: " . $skill->color => $skill->color])
+            @class([$indicatorClass => $indicatorClass])
         />
     </x-ui.progress.root>
 </{!! $as !!}>
