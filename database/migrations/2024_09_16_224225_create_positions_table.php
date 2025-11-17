@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('company');
+            $table->string('logo')->nullable();
             $table->text('description')->nullable();
 
             $table->string('type')->default(PositionType::DEFAULT->name);

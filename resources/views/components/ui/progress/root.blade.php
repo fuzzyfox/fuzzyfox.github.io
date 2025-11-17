@@ -1,3 +1,5 @@
+@use('TailwindMerge\TailwindMerge')
+
 @props([
     "value" => 0,
     "max" => null,
@@ -8,8 +10,8 @@
 @endphp
 
 @php
-    $classes = \TailwindMerge\TailwindMerge::instance()->merge(
-        "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
+    $classes = TailwindMerge::instance()->merge(
+        "relative h-2 w-full overflow-hidden rounded-full bg-secondary",
         $attributes->get("class"),
     );
 @endphp

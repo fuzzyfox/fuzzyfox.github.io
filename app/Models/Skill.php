@@ -63,6 +63,14 @@ class Skill extends Model
     }
 
     /**
+     * @return BelongsToMany<Project, static>
+     */
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class);
+    }
+
+    /**
      * @return Attribute<Collection<static>>
      */
     public function descendants(): Attribute

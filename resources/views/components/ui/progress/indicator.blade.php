@@ -1,3 +1,5 @@
+@use('TailwindMerge\TailwindMerge')
+
 @props([
     "value" => 0,
     "max" => null,
@@ -9,7 +11,7 @@
 @endphp
 
 @php
-    $classes = \TailwindMerge\TailwindMerge::instance()->merge(
+    $classes = TailwindMerge::instance()->merge(
         "h-full w-full flex-1 bg-primary transition-all rounded-full",
         $attributes->get("class"),
     );

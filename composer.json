@@ -10,6 +10,7 @@
         "blade-ui-kit/blade-icons": "^1.7",
         "calebporzio/sushi": "^2.5",
         "codeat3/blade-devicons": "^1.7",
+        "codeat3/blade-forkawesome": "^1.10",
         "codeat3/blade-simple-icons": "^5.8",
         "filament/filament": "^3.2",
         "gehrisandro/tailwind-merge-php": "^1.1",

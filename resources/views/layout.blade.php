@@ -32,47 +32,147 @@
         @vite("resources/js/app.js")
     </head>
     <body class="font-sans antialiased">
-        <aside class="flex justify-between border-b p-2 text-sm print:hidden">
-            <div class="flex items-center gap-2">
-                @hasSection("home")
-                    @yield("home")
-                @else
-                    <a href="/" aria-label="Home" class="block h-6 w-24">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 400 130"
-                            class="block"
-                        >
-                            <use
-                                xlink:href="{{ asset("logos/wduyck.svg") }}#svg"
-                            />
-                        </svg>
-
-                        <span class="sr-only">William Duyck</span>
-                    </a>
-                @endif
-            </div>
-
-            <nav class="flex items-center">
-                @foreach(\App\Models\Social::orderBy("sort")->orderBy("id")->get() as $social)
-                    <x-ui.button
-                        as="a"
-                        size="icon"
-                        variant="ghost"
-                        href="{{ $social->url }}"
-                        class="flex items-center"
-                        aria-label="{{ $social->platform }}"
-                    >
-                        <x-icon
-                            :name="$social->icon"
-                            class="size-4"
-                            @style(["color: " . $social->color => $social->color])
-                        />
-                    </x-ui.button>
-                @endforeach
-            </nav>
-        </aside>
 
         @yield("body")
+
+    @hasSection("footer")
+        @yield("footer")
+    @else
+        <footer class="pt-32 container pb-8">
+            <section class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <a href="{{ route('home') }}">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 400 130"
+                        class="mb-8 mr-auto h-7 md:mb-0"
+                    >
+                        <use xlink:href="{{ asset("logos/wduyck.svg") }}#svg"/>
+                    </svg>
+                </a>
+
+                <div class="flex flex-col gap-4 md:flex-row md:items-center">
+                    <p
+                        x-data="{
+                            tagline: $el.textContent,
+                            taglines: [
+                                'I code for people, not for machines.',
+                                'Crafting code that empowers people.',
+                                'Working to make the web a better place for all.',
+                                'Making things, and doing stuff, since 2005.',
+                                'Mozilla Alum.',
+                                'Open Source Enthusiast.',
+                            ],
+                            init() {
+                                setInterval(() => {
+                                    this.tagline = this.taglines[Math.floor(Math.random() * this.taglines.length)];
+                                }, 5_000);
+                            },
+                        }"
+                        class="text-lg font-medium"
+                        x-text="tagline"
+                    >
+                        I code for people, not for machines.
+                    </p>
+                </div>
+            </section>
+
+            <x-ui.separator class="mt-8 mb-14" />
+
+            <nav class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+                <div>
+                    <h3 class="mb-4 font-bold">Portfolio</h3>
+                    <ul class="space-y-4 text-muted-foreground">
+                        <li class="font-medium hover:text-primary transition-colors">
+                            <a href="{{ route('skills.index') }}">Skills</a>
+                        </li>
+                        <li class="font-medium hover:text-primary transition-colors">
+                            <a href="{{ route('projects.index') }}">Projects</a>
+                        </li>
+                        <li class="font-medium hover:text-primary transition-colors">
+                            <a href="https://github.com/fuzzyfox" target="_blank" rel="noopener" class="inline-flex items-center">Open Source <x-lucide-external-link class="size-4 ml-1"/></a>
+                        </li>
+{{--                        <li class="font-medium hover:text-primary transition-colors">--}}
+{{--                            <a href="#">Testimonials</a>--}}
+{{--                        </li>--}}
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="mb-4 font-bold">About Me</h3>
+                    <ul class="space-y-4 text-muted-foreground">
+                        <li class="font-medium hover:text-primary transition-colors">
+                            <a href="https://ghost.wduyck.me" rel="noopener" class="inline-flex items-center">Blog <x-lucide-external-link class="size-4 ml-1"/></a>
+                        </li>
+                        <li class="font-medium hover:text-primary transition-colors">
+                            <a href="{{ route('cv') }}">Resumé</a>
+                        </li>
+{{--                        <li class="font-medium hover:text-primary transition-colors">--}}
+{{--                            <a href="#">Contact</a>--}}
+{{--                        </li>--}}
+                    </ul>
+                </div>
+
+                <div>
+{{--                    <h3 class="mb-4 font-bold">Resources</h3>--}}
+{{--                    <ul class="space-y-4 text-muted-foreground">--}}
+{{--                        <li class="font-medium hover:text-primary transition-colors">--}}
+{{--                            <a href="#">Guides</a>--}}
+{{--                        </li>--}}
+{{--                        <li class="font-medium hover:text-primary transition-colors">--}}
+{{--                            <a href="#" rel="noopener">Presentations</a>--}}
+{{--                        </li>--}}
+{{--                        <li class="font-medium hover:text-primary transition-colors">--}}
+{{--                            <a href="#">Links & Tools</a>--}}
+{{--                        </li>--}}
+{{--                    </ul>--}}
+                </div>
+
+                <div>
+                    <h3 class="mb-4 font-bold">Social</h3>
+                    <ul class="flex flex-wrap items-center gap-6">
+                        @foreach(\App\Models\Social::orderBy('sort')->get() as $social)
+                            <li
+                                class="font-medium opacity-55 hover:opacity-100 shrink-0 transition-opacity"
+                                @style(['color: ' . $social->color => $social->color])
+                            >
+                                <a href="{{  $social->url }}" rel="noopener noreferrer" target="_blank">
+                                    <x-icon :name="$social->icon" class="size-6"/>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </nav>
+
+            <x-ui.separator class="mt-14 mb-8" />
+
+            <section class="flex items-center justify-between text-sm text-muted-foreground">
+                <p class="flex items-center gap-2">
+                    <a
+                        href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                        rel="noopener"
+                        target="_blank"
+                        class="inline-flex items-center gap-1 hover:text-primary transition-colors"
+                        title="Attribution-NonCommercial-ShareAlike 4.0 International"
+                    >
+                        <span class="sr-only">CC BY-NC-SA</span>
+                        <x-forkawesome-cc-cc class="size-4" />
+                        <x-forkawesome-cc-by class="size-4" />
+                        <x-forkawesome-cc-nc class="size-4" />
+                        <x-forkawesome-cc-sa class="size-4" />
+                    </a>
+                    William Duyck
+                </p>
+
+                <a
+                    href="https://github.com/fuzzyfox/fuzzyfox.github.io/#readme"
+                    aria-label="Site Version / View Source Code"
+                    class="text-muted-foreground hover:text-primary transition-colors"
+                >
+                    v{{ config("app.version", "7.0.0") }}
+                </a>
+            </section>
+        </footer>
+    @endif
     </body>
 </html>

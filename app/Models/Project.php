@@ -2,46 +2,35 @@
 
 namespace App\Models;
 
-use App\Enums\PositionType;
-use App\Models\Concerns\HasSqids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Position extends Model
+class Project extends Model
 {
-    use HasFactory;
-    use HasSqids;
-
-    protected $with = ['company'];
-
     protected $fillable = [
-        'company_id',
-
-        'title',
-        'description',
-
-        'logo',
-        'header_color',
-        'header_image',
-
+        'name',
         'slug',
-        'type',
-
-        'locality',
-        'region',
-
+        'url',
+        'company_id',
+        'description',
+        'feature_image',
+        'header_image',
+        'header_color',
         'start_date',
         'end_date',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     protected function casts(): array
     {
         return [
-            'type' => PositionType::class,
-            'start_date' => 'date',
-            'end_date' => 'date',
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
         ];
     }
 

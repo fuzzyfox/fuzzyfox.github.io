@@ -9,9 +9,16 @@ use App\Models\Skill;
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -27,13 +34,13 @@ class PositionResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['title', 'company', 'locality', 'skills.name'];
+        return ['title', 'company.name', 'locality', 'skills.name'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return array_filter([
-            'Company' => $record->company,
+            'Company' => $record->company->name,
             'Locality' => $record->locality,
         ]);
     }
@@ -43,29 +50,30 @@ class PositionResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Forms\Components\Group::make()
+                Group::make()
                     ->columnSpan(2)
                     ->schema([
-                        Forms\Components\Section::make(static::getTitleCaseModelLabel())
+                        Section::make(static::getTitleCaseModelLabel())
                             ->icon(static::getNavigationIcon())
                             ->collapsible()
                             ->columns()
                             ->schema([
-                                Forms\Components\TextInput::make('title')
+                                TextInput::make('title')
                                     ->required(),
 
-                                Forms\Components\TextInput::make('company')
+                                Select::make('company_id')
+                                    ->relationship('company', 'name')
                                     ->required(),
 
-                                Forms\Components\MarkdownEditor::make('description')
+                                MarkdownEditor::make('description')
                                     ->columnSpanFull(),
                             ]),
 
-                        Forms\Components\Section::make(SkillResource::getTitleCasePluralModelLabel())
+                        Section::make(SkillResource::getTitleCasePluralModelLabel())
                             ->icon(SkillResource::getNavigationIcon())
                             ->collapsed()
                             ->schema([
-                                Forms\Components\Select::make('skills')
+                                Select::make('skills')
                                     ->hiddenLabel()
                                     ->relationship('skills', 'name')
                                     ->createOptionForm(fn (Form $form) => SkillResource::form($form))
@@ -90,28 +98,35 @@ class PositionResource extends Resource
                             ]),
                     ]),
 
-                Forms\Components\Group::make()
+                Group::make()
                     ->columnSpan(1)
                     ->schema([
-                        Forms\Components\Section::make(static::getTitleCaseModelLabel().' type')
+                        Section::make('Navigation')
+                            ->icon('lucide-link')
+                            ->schema([
+                                TextInput::make('slug')
+                                    ->required(),
+                            ]),
+
+                        Section::make(static::getTitleCaseModelLabel().' type')
                             ->icon(static::getNavigationIcon())
                             ->collapsed()
                             ->schema([
-                                Forms\Components\Select::make('type')
+                                Select::make('type')
                                     ->hiddenLabel()
                                     ->options(PositionType::class)
                                     ->required(),
                             ]),
 
-                        Forms\Components\Section::make('Location')
+                        Section::make('Location')
                             ->icon('lucide-map')
                             ->collapsed()
                             ->schema([
-                                Forms\Components\TextInput::make('locality')
+                                TextInput::make('locality')
                                     ->label('City')
-                                    ->datalist(Position::distinct()->pluck('locality')->all()),
+                                    ->datalist(static::getModel()::distinct()->pluck('locality')->all()),
 
-                                Forms\Components\Select::make('region')
+                                Select::make('region')
                                     ->label('Country')
                                     ->options(fn () => Arr::map(
                                         Arr::sort(
@@ -128,7 +143,7 @@ class PositionResource extends Resource
                                     ->live(onBlur: true),
                             ]),
 
-                        Forms\Components\Section::make('Dates')
+                        Section::make('Dates')
                             ->icon('lucide-calendar')
                             ->collapsed()
                             ->schema([
@@ -138,18 +153,7 @@ class PositionResource extends Resource
                                 Forms\Components\DatePicker::make('end_date'),
                             ]),
 
-                        Forms\Components\Section::make('Logo')
-                            ->icon('lucide-image')
-                            ->collapsed()
-                            ->schema([
-                                FileUpload::make('logo')
-                                    ->hiddenLabel()
-                                    ->disk('public')
-                                    ->directory('positions/logos')
-                                    ->image(),
-                            ]),
-
-                        Forms\Components\Section::make('Styling')
+                        Section::make('Styling')
                             ->icon('lucide-brush')
                             ->collapsed()
                             ->schema([
@@ -170,15 +174,18 @@ class PositionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->toggleable()
-                    ->searchable(),
+                    ->searchable()
+                    ->description(
+                        fn (Table $table, Position $record) => when(
+                            $table->getColumn('company.name')
+                                ->isToggledHidden(),
+                            fn () => $record->company->name
+                        ),
+                    ),
 
-                Tables\Columns\TextColumn::make('company')
+                Tables\Columns\TextColumn::make('company.name')
                     ->toggleable()
                     ->searchable(),
-
-                Tables\Columns\ImageColumn::make('logo')
-                    ->toggleable()
-                    ->square(),
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
@@ -205,6 +212,17 @@ class PositionResource extends Resource
                 Tables\Columns\TextColumn::make('end_date')
                     ->date('M Y')
                     ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('skills')
+                    ->badge()
+                    ->limitList(5)
+                    ->formatStateUsing(fn (?Skill $state) => $state->name)
+                    ->icon(fn (?Skill $state) => $state->icon)
+                    ->color(fn (?Skill $state) => when(
+                        $state->color,
+                        fn ($color) => FilamentColor::processColor($color)
+                    ))
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('created_at')

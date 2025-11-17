@@ -239,6 +239,7 @@ class SkillResource extends Resource
     {
         return [
             RelationManagers\PositionsRelationManager::class,
+            RelationManagers\ProjectsRelationManager::class,
         ];
     }
 

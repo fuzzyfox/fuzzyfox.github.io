@@ -22,7 +22,7 @@
             />
         @endif
 
-        <h3 class="text-lg font-medium">
+        <h3 class="sm:text-lg font-medium">
             {{ $skill->name }}
             @if ($level && $skill->level)
                 <small class="self-end text-muted-foreground">
@@ -33,7 +33,7 @@
 
         @if ($years && $skill->years_of_experience)
             <small class="ml-auto self-end text-muted-foreground whitespace-nowrap">
-                {{ $skill->years_of_experience < 5 ? $skill->years_of_experience : floor($skill->years_of_experience / 5) * 5 . "+" }}
+                {{ $skill->years_of_experience < 10 ? $skill->years_of_experience : floor($skill->years_of_experience / 5) * 5 . "+" }}
                 yrs
             </small>
         @endif
@@ -44,7 +44,7 @@
             :value="$skill->rank * 100"
             :max="100"
             @style(["background-color: " . $skill->color => $skill->color])
-            @class([$indicatorClass => $indicatorClass])
+            @class(['animate-scroll duration-1000', $indicatorClass => $indicatorClass])
         />
     </x-ui.progress.root>
 </{!! $as !!}>

@@ -7,6 +7,7 @@ use App\Models\Position;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class PositionFactory extends Factory
 {
@@ -19,6 +20,7 @@ class PositionFactory extends Factory
             'company' => $this->faker->company(),
             'description' => $this->faker->text(),
 
+            'slug' => fn ($attributes) => Str::slug($attributes['company']),
             'type' => Arr::random(PositionType::cases()),
 
             'locality' => $this->faker->city(),
