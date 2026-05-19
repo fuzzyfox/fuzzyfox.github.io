@@ -2,6 +2,23 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\PositionResource\Pages\ListPositions;
+use App\Filament\Resources\PositionResource\Pages\CreatePosition;
+use App\Filament\Resources\PositionResource\Pages\ViewPosition;
+use App\Filament\Resources\PositionResource\Pages\EditPosition;
 use App\Enums\PositionType;
 use App\Filament\Resources\PositionResource\Pages;
 use App\Models\Position;
@@ -9,7 +26,6 @@ use App\Models\Skill;
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,7 +37,7 @@ class PositionResource extends Resource
 {
     protected static ?string $model = Position::class;
 
-    protected static ?string $navigationIcon = 'lucide-briefcase';
+    protected static string | \BackedEnum | null $navigationIcon = 'lucide-briefcase';
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -38,37 +54,37 @@ class PositionResource extends Resource
         ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(3)
             ->schema([
-                Forms\Components\Group::make()
+                Group::make()
                     ->columnSpan(2)
                     ->schema([
-                        Forms\Components\Section::make(static::getTitleCaseModelLabel())
+                        Section::make(static::getTitleCaseModelLabel())
                             ->icon(static::getNavigationIcon())
                             ->collapsible()
                             ->columns()
                             ->schema([
-                                Forms\Components\TextInput::make('title')
+                                TextInput::make('title')
                                     ->required(),
 
-                                Forms\Components\TextInput::make('company')
+                                TextInput::make('company')
                                     ->required(),
 
-                                Forms\Components\MarkdownEditor::make('description')
+                                MarkdownEditor::make('description')
                                     ->columnSpanFull(),
                             ]),
 
-                        Forms\Components\Section::make(SkillResource::getTitleCasePluralModelLabel())
+                        Section::make(SkillResource::getTitleCasePluralModelLabel())
                             ->icon(SkillResource::getNavigationIcon())
                             ->collapsed()
                             ->schema([
-                                Forms\Components\Select::make('skills')
+                                Select::make('skills')
                                     ->hiddenLabel()
                                     ->relationship('skills', 'name')
-                                    ->createOptionForm(fn (Form $form) => SkillResource::form($form))
+                                    ->createOptionForm(fn (Schema $schema) => SkillResource::form($schema))
                                     ->getOptionLabelFromRecordUsing(function (Skill $record): string {
                                         if (! $record->icon) {
                                             return $record->name;
@@ -90,28 +106,28 @@ class PositionResource extends Resource
                             ]),
                     ]),
 
-                Forms\Components\Group::make()
+                Group::make()
                     ->columnSpan(1)
                     ->schema([
-                        Forms\Components\Section::make(static::getTitleCaseModelLabel().' type')
+                        Section::make(static::getTitleCaseModelLabel().' type')
                             ->icon(static::getNavigationIcon())
                             ->collapsed()
                             ->schema([
-                                Forms\Components\Select::make('type')
+                                Select::make('type')
                                     ->hiddenLabel()
                                     ->options(PositionType::class)
                                     ->required(),
                             ]),
 
-                        Forms\Components\Section::make('Location')
+                        Section::make('Location')
                             ->icon('lucide-map')
                             ->collapsed()
                             ->schema([
-                                Forms\Components\TextInput::make('locality')
+                                TextInput::make('locality')
                                     ->label('City')
                                     ->datalist(Position::distinct()->pluck('locality')->all()),
 
-                                Forms\Components\Select::make('region')
+                                Select::make('region')
                                     ->label('Country')
                                     ->options(fn () => Arr::map(
                                         Arr::sort(
@@ -128,17 +144,17 @@ class PositionResource extends Resource
                                     ->live(onBlur: true),
                             ]),
 
-                        Forms\Components\Section::make('Dates')
+                        Section::make('Dates')
                             ->icon('lucide-calendar')
                             ->collapsed()
                             ->schema([
-                                Forms\Components\DatePicker::make('start_date')
+                                DatePicker::make('start_date')
                                     ->required(),
 
-                                Forms\Components\DatePicker::make('end_date'),
+                                DatePicker::make('end_date'),
                             ]),
 
-                        Forms\Components\Section::make('Logo')
+                        Section::make('Logo')
                             ->icon('lucide-image')
                             ->collapsed()
                             ->schema([
@@ -149,7 +165,7 @@ class PositionResource extends Resource
                                     ->image(),
                             ]),
 
-                        Forms\Components\Section::make('Styling')
+                        Section::make('Styling')
                             ->icon('lucide-brush')
                             ->collapsed()
                             ->schema([
@@ -168,28 +184,28 @@ class PositionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->toggleable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('company')
+                TextColumn::make('company')
                     ->toggleable()
                     ->searchable(),
 
-                Tables\Columns\ImageColumn::make('logo')
+                ImageColumn::make('logo')
                     ->toggleable()
                     ->square(),
 
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->badge()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('locality')
+                TextColumn::make('locality')
                     ->toggleable()
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('region')
+                TextColumn::make('region')
                     ->formatStateUsing(fn (?string $state) => $state
                         ? country2emoji($state).' '.Countries::getName($state)
                         : null)
@@ -197,22 +213,22 @@ class PositionResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('start_date')
+                TextColumn::make('start_date')
                     ->date('M Y')
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('end_date')
+                TextColumn::make('end_date')
                     ->date('M Y')
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -221,13 +237,13 @@ class PositionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -242,10 +258,10 @@ class PositionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPositions::route('/'),
-            'create' => Pages\CreatePosition::route('/create'),
-            'view' => Pages\ViewPosition::route('/{record}'),
-            'edit' => Pages\EditPosition::route('/{record}/edit'),
+            'index' => ListPositions::route('/'),
+            'create' => CreatePosition::route('/create'),
+            'view' => ViewPosition::route('/{record}'),
+            'edit' => EditPosition::route('/{record}/edit'),
         ];
     }
 }

@@ -2,11 +2,22 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\SocialResource\Pages\ListSocials;
+use App\Filament\Resources\SocialResource\Pages\CreateSocial;
+use App\Filament\Resources\SocialResource\Pages\ViewSocial;
+use App\Filament\Resources\SocialResource\Pages\EditSocial;
 use App\Filament\Forms\Components\IconSelect;
 use App\Filament\Resources\SocialResource\Pages;
 use App\Models\Social;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables;
@@ -16,24 +27,24 @@ class SocialResource extends Resource
 {
     protected static ?string $model = Social::class;
 
-    protected static ?string $navigationIcon = 'lucide-radio-tower';
+    protected static string | \BackedEnum | null $navigationIcon = 'lucide-radio-tower';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('platform')
+        return $schema
+            ->components([
+                TextInput::make('platform')
                     ->required(),
 
-                Forms\Components\TextInput::make('url')
+                TextInput::make('url')
                     ->required(),
 
                 IconSelect::make('icon')
                     ->required(),
 
-                Forms\Components\ColorPicker::make('color'),
+                ColorPicker::make('color'),
 
-                Forms\Components\TextInput::make('sort')
+                TextInput::make('sort')
                     ->required()
                     ->numeric()
                     ->default(0),
@@ -44,20 +55,20 @@ class SocialResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('platform')
+                TextColumn::make('platform')
                     ->icon(fn (Social $record) => $record->icon)
                     ->iconColor(fn (Social $record) => $record->color ? FilamentColor::processColor($record->color) : null)
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('url')
+                TextColumn::make('url')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -66,13 +77,13 @@ class SocialResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -87,10 +98,10 @@ class SocialResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSocials::route('/'),
-            'create' => Pages\CreateSocial::route('/create'),
-            'view' => Pages\ViewSocial::route('/{record}'),
-            'edit' => Pages\EditSocial::route('/{record}/edit'),
+            'index' => ListSocials::route('/'),
+            'create' => CreateSocial::route('/create'),
+            'view' => ViewSocial::route('/{record}'),
+            'edit' => EditSocial::route('/{record}/edit'),
         ];
     }
 }

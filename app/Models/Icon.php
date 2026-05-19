@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use BladeUI\Icons\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Sushi\Sushi;
@@ -20,7 +21,7 @@ class Icon extends Model
     {
         $icons = [];
 
-        $sets = app(\BladeUI\Icons\Factory::class)->all();
+        $sets = app(Factory::class)->all();
 
         foreach ($sets as $setName => $set) {
             foreach ($set['paths'] as $path) {

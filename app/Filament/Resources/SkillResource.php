@@ -2,6 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\SkillResource\RelationManagers\PositionsRelationManager;
+use App\Filament\Resources\SkillResource\Pages\ListSkills;
+use App\Filament\Resources\SkillResource\Pages\CreateSkill;
+use App\Filament\Resources\SkillResource\Pages\ViewSkill;
+use App\Filament\Resources\SkillResource\Pages\EditSkill;
 use App\Enums\SkillLevel;
 use App\Filament\Forms\Components\IconSelect;
 use App\Filament\Resources\SkillResource\Pages;
@@ -9,7 +28,6 @@ use App\Filament\Resources\SkillResource\RelationManagers;
 use App\Models\Skill;
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables;
@@ -23,7 +41,7 @@ class SkillResource extends Resource
 {
     protected static ?string $model = Skill::class;
 
-    protected static ?string $navigationIcon = 'lucide-tags';
+    protected static string | \BackedEnum | null $navigationIcon = 'lucide-tags';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -41,21 +59,21 @@ class SkillResource extends Resource
         ]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required(),
 
-                Forms\Components\TextInput::make('slug')
+                TextInput::make('slug')
                     ->alphaDash()
                     ->required(),
 
-                Forms\Components\TextInput::make('url')
+                TextInput::make('url')
                     ->url(),
 
-                Forms\Components\Select::make('parent_id')
+                Select::make('parent_id')
                     ->relationship(name: 'parent', titleAttribute: 'name')
                     ->searchable()
                     ->getOptionLabelFromRecordUsing(function (Skill $record): string {
@@ -67,14 +85,14 @@ class SkillResource extends Resource
                     })
                     ->allowHtml(),
 
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->columnSpanFull(),
 
-                Forms\Components\TextInput::make('start_year')
+                TextInput::make('start_year')
                     ->numeric()
                     ->integer()
                     ->live()
-                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set, $state) {
+                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
                         $experience = (int) $get('years_of_experience');
 
                         if (! $experience) {
@@ -84,18 +102,18 @@ class SkillResource extends Resource
                         $set('years_of_experience', Number::clamp($experience, 0, today()->year - (int) $state));
                     }),
 
-                Forms\Components\TextInput::make('years_of_experience')
-                    ->placeholder(fn (Forms\Get $get) => when($get('start_year'), fn ($year) => today()->year - (int) $year))
+                TextInput::make('years_of_experience')
+                    ->placeholder(fn (Get $get) => when($get('start_year'), fn ($year) => today()->year - (int) $year))
                     ->numeric()
                     ->integer()
                     ->minValue(0)
-                    ->maxValue(fn (Forms\Get $get) => when($get('start_year'), fn ($year) => today()->year - (int) $year))
+                    ->maxValue(fn (Get $get) => when($get('start_year'), fn ($year) => today()->year - (int) $year))
                     ->live(),
 
-                Forms\Components\Select::make('level')
+                Select::make('level')
                     ->options(SkillLevel::class),
 
-                Forms\Components\Select::make('is_promoted')
+                Select::make('is_promoted')
                     ->dehydrateStateUsing(fn ($state) => (bool) $state)
                     ->options([
                         false => 'Not promoted',
@@ -113,60 +131,60 @@ class SkillResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->icon(fn (Skill $record) => $record->icon)
                     ->iconColor(fn (Skill $record) => $record->color ? FilamentColor::processColor($record->color) : null)
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('slug')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('url')
+                TextColumn::make('url')
                     ->url(fn (?string $state) => $state, shouldOpenInNewTab: true)
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->formatStateUsing(fn ($state) => new HtmlString(Str::inlineMarkdown($state)))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('parent.name')
+                TextColumn::make('parent.name')
                     ->icon(fn (Skill $record) => $record->parent?->icon)
                     ->iconColor(fn (Skill $record) => $record->parent?->color ? FilamentColor::processColor($record->parent?->color) : null)
                     ->extraAttributes(['style' => 'opacity: 0.4;'])
                     ->searchable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('start_year')
+                TextColumn::make('start_year')
                     ->placeholder('Not specified')
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('level')
+                TextColumn::make('level')
                     ->placeholder('Not specified')
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('years_of_experience')
+                TextColumn::make('years_of_experience')
                     ->label('Exp.')
                     ->placeholder('Not specified')
                     ->numeric()
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\ToggleColumn::make('is_promoted')
+                ToggleColumn::make('is_promoted')
                     ->label('Promoted')
                     ->sortable()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -174,44 +192,44 @@ class SkillResource extends Resource
             ->defaultSort('name')
             ->reorderable('sort')
             ->filters([
-                Tables\Filters\TernaryFilter::make('has_icon')
+                TernaryFilter::make('has_icon')
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('icon'),
                         false: fn ($query) => $query->whereNull('icon'),
                     ),
 
-                Tables\Filters\TernaryFilter::make('has_url')
+                TernaryFilter::make('has_url')
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('url'),
                         false: fn ($query) => $query->whereNull('url'),
                     ),
 
-                Tables\Filters\TernaryFilter::make('has_parent')
+                TernaryFilter::make('has_parent')
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('parent'),
                         false: fn ($query) => $query->whereNull('parent'),
                     ),
 
-                Tables\Filters\TernaryFilter::make('has_start_year')
+                TernaryFilter::make('has_start_year')
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('start_year'),
                         false: fn ($query) => $query->whereNull('start_year'),
                     ),
 
-                Tables\Filters\TernaryFilter::make('has_level')
+                TernaryFilter::make('has_level')
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('level'),
                         false: fn ($query) => $query->whereNull('level'),
                     ),
 
-                Tables\Filters\TernaryFilter::make('has_years_of_experience')
+                TernaryFilter::make('has_years_of_experience')
                     ->label('Has experience')
                     ->queries(
                         true: fn ($query) => $query->whereNotNull('years_of_experience'),
                         false: fn ($query) => $query->whereNull('years_of_experience'),
                     ),
 
-                Tables\Filters\SelectFilter::make('parent_id')
+                SelectFilter::make('parent_id')
                     ->relationship('parent', 'name')
                     ->getOptionLabelFromRecordUsing(function (Skill $record): string {
                         if (! $record->icon) {
@@ -222,15 +240,15 @@ class SkillResource extends Resource
                     })
                     ->searchable()
                     ->multiple()
-                    ->modifyFormFieldUsing(fn (Forms\Components\Select $field) => $field->allowHtml()),
+                    ->modifyFormFieldUsing(fn (Select $field) => $field->allowHtml()),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -238,17 +256,17 @@ class SkillResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\PositionsRelationManager::class,
+            PositionsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSkills::route('/'),
-            'create' => Pages\CreateSkill::route('/create'),
-            'view' => Pages\ViewSkill::route('/{record}'),
-            'edit' => Pages\EditSkill::route('/{record}/edit'),
+            'index' => ListSkills::route('/'),
+            'create' => CreateSkill::route('/create'),
+            'view' => ViewSkill::route('/{record}'),
+            'edit' => EditSkill::route('/{record}/edit'),
         ];
     }
 }

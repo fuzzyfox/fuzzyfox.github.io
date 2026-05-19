@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Sqids\Sqids;
 
@@ -27,7 +28,7 @@ trait HasSqids
         $key = parent::getRouteKey();
 
         if (! is_int($key)) {
-            throw new \Exception('Cannot use the '.__CLASS__.' trait with models that have `'.gettype($key).'` route keys');
+            throw new Exception('Cannot use the '.__CLASS__.' trait with models that have `'.gettype($key).'` route keys');
         }
 
         return $this->getSqids()->encode([crc32(static::class), $key]);
@@ -38,7 +39,7 @@ trait HasSqids
      *
      * @param  mixed  $value
      * @param  string|null  $field
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return Model|null
      */
     public function resolveRouteBinding($value, $field = null)
     {
