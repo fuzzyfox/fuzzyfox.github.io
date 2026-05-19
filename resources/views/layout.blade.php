@@ -30,6 +30,23 @@
 
         <!-- Scripts -->
         @vite("resources/js/app.js")
+
+        <!-- Privacy-friendly analytics by Plausible -->
+        <script async src="https://analytics.wduyck.me/js/pa-r4tqiRaQotbEPijoo3fu1.js"></script>
+        <script>
+            window.plausible =
+                window.plausible ||
+                function () {
+                    (plausible.q = plausible.q || []).push(arguments)
+                }
+            plausible.init = plausible.init || function (i) {
+                plausible.o = i || {}
+            }
+            plausible.init({
+                outboundLinks: true,
+                fileDownloads: true,
+            })
+        </script>
     </head>
     <body class="font-sans antialiased">
         <aside class="flex justify-between border-b p-2 text-sm print:hidden">
