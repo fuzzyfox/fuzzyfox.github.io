@@ -82,10 +82,10 @@ class Skill extends Model
 
             $experienceScore = $this->years_of_experience ? min(($this->years_of_experience / ($maxYearsExperience)) * 0.25, 1) : 0;
             $levelScore = match ($this->level) {
-                \App\Enums\SkillLevel::Beginner => 0.25,
-                \App\Enums\SkillLevel::Intermediate => 0.40,
-                \App\Enums\SkillLevel::Advanced => 0.60,
-                \App\Enums\SkillLevel::Expert => 0.75,
+                SkillLevel::Beginner => 0.25,
+                SkillLevel::Intermediate => 0.40,
+                SkillLevel::Advanced => 0.60,
+                SkillLevel::Expert => 0.75,
                 default => 0,
             };
 
